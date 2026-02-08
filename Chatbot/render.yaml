@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: waba-api
+    env: docker
+    dockerfilePath: apps/api/Dockerfile
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: waba-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: waba-redis
+          type: redis
+          property: connectionString
+
+  - type: worker
+    name: waba-worker
+    env: docker
+    dockerfilePath: apps/worker/Dockerfile
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: waba-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: waba-redis
+          type: redis
+          property: connectionString
+
+  - type: redis
+    name: waba-redis
+    plan: starter
+
+databases:
+  - name: waba-db
+    plan: starter
